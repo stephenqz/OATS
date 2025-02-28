@@ -25,7 +25,7 @@ def distribute_model(model_adapter) -> None:
         state_dict=model.state_dict(),
     )
 
-def map_tensors(obj, device, dtype):
+def map_tensors(obj, device, dtype=None):
     """Recursively map tensors to device and dtype."""
     if isinstance(obj, torch.Tensor):
         if device is not None:

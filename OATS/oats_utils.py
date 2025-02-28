@@ -58,7 +58,7 @@ def load_oats(
     model_adapter.post_init(tokenizer)
 
     # Convert model to compressed model
-    _, _, prune_start_idx, layerwise_sparsity_ratios, _ = load_checkpoint(model_path +  "/prune_chkpt.pt")
+    _, _, prune_start_idx, _ = load_checkpoint(model_path +  "/prune_chkpt.pt")
 
     rank_ratio = prune_hyperparams['rank_ratio']
 
@@ -73,10 +73,7 @@ def load_oats(
     for layer_idx, layer_adapter in enumerate(layers):
         if layer_idx <= prune_start_idx:
             
-            if layerwise_sparsity_ratios is not None:
-                dense_alloc = 1.0 - layerwise_sparsity_ratios[layer_idx]
-            else:
-                dense_alloc = 1.0 - sparsity
+            dense_alloc = 1.0 - sparsity
             
             print(dense_alloc)
 
