@@ -15,11 +15,16 @@ The dependencies used to run the experiments in our paper are:
     transformers==4.44.1
 ```
 
+## How to Run
+Hyperparameter and experiment specifications are passed via a list of dictionaries in `OATS_configs.py` with each dictionary representing a specific experiment. The `compress` variable for OATS should be set to `False` if evaluating model performance. If this is the case, the sparse plus low-rank matrices are summed and saved as a single dense matrix. File to run is `main.py`. 
+
 ## Codebases Utilized
 Our code utilizes and takes inspiration from the codebases found at the following GitHub Repos:
+```
     SliceGPT: https://github.com/microsoft/TransformerCompression
     SparseGPT: https://github.com/IST-DASLab/sparsegpt
     Wanda: https://github.com/locuslab/wanda
+```
 
 ## Citation
 ```
