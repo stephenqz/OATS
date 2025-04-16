@@ -92,15 +92,16 @@ def pruning_main(args, checkpoint_path) -> None:
     print(f'Original model parameters: {original_param_count:,d}')
 
     # ========================= Pruning Code ========================================
-    prune_n, prune_m = 0, 0
-    if args.prune_hyper['sparsity_type'] != "unstructured":
-        assert args.sparsity == 0.5, "sparsity ratio must be 0.5 for structured N:M sparsity"
-        prune_n, prune_m = map(int, args.prune_hyper['sparsity_type'].split(":"))
+    if args.prune_type == "OATS":
+        prune_n, prune_m = 0, 0
+        if args.prune_hyper['sparsity_type'] != "unstructured":
+            assert args.sparsity == 0.5, "sparsity ratio must be 0.5 for structured N:M sparsity"
+            prune_n, prune_m = map(int, args.prune_hyper['sparsity_type'].split(":"))
     
-    if args.prune_hyper['compress']:
-        prune_oats_compress(model_adapter, args.sparsity, train_loader, args.prune_hyper, checkpoint_path, prune_n=prune_n, prune_m=prune_m)
-    else:
-        prune_oats(model_adapter, tokenizer, args.sparsity, train_loader, args.prune_hyper, checkpoint_path, prune_n=prune_n, prune_m=prune_m)
+        if args.prune_hyper['compress']:
+            prune_oats_compress(model_adapter, args.sparsity, train_loader, args.prune_hyper, checkpoint_path, prune_n=prune_n, prune_m=prune_m)
+        else:
+            prune_oats(model_adapter, tokenizer, args.sparsity, train_loader, args.prune_hyper, checkpoint_path, prune_n=prune_n, prune_m=prune_m)
     # =================================================
 
     # Run PPL Eval
@@ -118,7 +119,7 @@ def pruning_main(args, checkpoint_path) -> None:
             ppl_vals = {task: round(result.get('word_perplexity,none', result['word_perplexity,none']), 4) for task, result in ppl_results.items()}
 
             for k, v in ppl_vals.items():
-                print("Task Name: " + k + " Task Score: " + v)
+                print("Task Name: " + k + " Task Score: " + str(v))
 
     # ============== Run Zeroshot Eval ================
     if args.eval_zero_shot:
@@ -136,7 +137,7 @@ def pruning_main(args, checkpoint_path) -> None:
             metric_vals['average_zero_shot'] = round(acc_avg, 4)
             
             for k, v in metric_vals.items():
-                print("Task Name: " + k + " Task Score: " + v)
+                print("Task Name: " + k + " Task Score: " + str(v))
     
     if args.eval_mmlu:
         hflm = HFLM(pretrained=model_adapter.model, tokenizer=tokenizer, batch_size=eval_batch_size) 
@@ -159,7 +160,7 @@ def pruning_main(args, checkpoint_path) -> None:
             metric_vals['average_mmlu'] = round(mmlu_avg, 4)
             
             for k, v in metric_vals.items():
-                print("Task Name: " + k + " Task Score: " + v)
+                print("Task Name: " + k + " Task Score: " + str(v))
             
     return
 

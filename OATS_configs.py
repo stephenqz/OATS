@@ -12,8 +12,8 @@ for rank_idx in range(len(rank_ratio_list)):
         }
         oats_configs.append(oats_config)
 
-model_list = ["phi-3-mini", "phi-3-medium", "llama3-8b"] 
-prune_list = ["OATS"]
+model_list = ["llama3-8b", "phi-3-mini", "phi-3-medium"] 
+prune_list = ["OATS", "dense"]
 
 OATS_exper = []
 counter = 1
@@ -31,10 +31,13 @@ for m_idx in range(len(model_list)):
                 sparsity_type_list = ["unstructured", "2:8"]
             else:
                 sparsity_type_list = ["unstructured"]
-            for oats_idx in range(len(oats_configs)):
-                for st_idx in range(len(sparsity_type_list)):
-                    oats_configs[oats_idx]["sparsity_type"] = sparsity_type_list[st_idx]
-                    prune_hyper_list.append(oats_configs[oats_idx].copy())
+            if prune_list[p_idx] == 'OATS':
+                for oats_idx in range(len(oats_configs)):
+                    for st_idx in range(len(sparsity_type_list)):
+                        oats_configs[oats_idx]["sparsity_type"] = sparsity_type_list[st_idx]
+                        prune_hyper_list.append(oats_configs[oats_idx].copy())
+            else:
+                prune_hyper_list = [{"sparsity_type": "None"}]
             
             for ph_idx in range(len(prune_hyper_list)):
                 exper_dict = {
